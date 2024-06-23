@@ -1,0 +1,95 @@
+#项目的访问接口
+server:
+  port: 3078
+
+#数据源的配置
+spring:
+  datasource:
+    driver: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://114.132.67.226:3306/SmartStudy?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username:
+    password:
+    hikari:
+      max-lifetime: 120000
+
+  #redis的配置
+  data:
+    redis:
+      host: 114.132.67.226
+      port:
+      password:
+
+
+  cache:
+    type: redis
+    redis:
+      key-prefix: SmartStudy
+      time-to-live: 600s
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+
+#mybatis配置
+mybatis:
+  #指定sql映射文件的位置
+  mapper-locations: classpath:mapper/*.xml
+  #指定给实体类起别名
+  type-aliases-package: com.example.smartstudy.model.po
+  configuration:
+    #开启驼峰命名规则
+    map-underscore-to-camel-case: true
+    #开启日志功能
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+minio:
+  #  endpoint: http://192.168.1.4:9000
+  endpoint:
+  bucketName: orientation
+  accessKey:
+  secretKey:
+
+zw:
+  #jwt令牌的配置
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    or-secret-key:
+    # 设置jwt过期时间 30天  30*24*60*60*1000
+    or-ttl: 2592000000
+    # 设置前端传递过来的令牌名称
+    or-token-name: Authorization
+
+
+  uni:
+    #短信公钥
+    access-key-id:
+    #短信模板 ID
+    template_id:
+    #短信签名
+    signature: 李梓文
+    #有效时间 1000*60*3
+    ttl: 3
+
+xfxh:
+  # 服务引擎使用 讯飞星火认知大模型
+  hostUrl:
+  # 发送请求时指定的访问领域
+  domain: general
+  # 核采样阈值。用于决定结果随机性，取值越高随机性越强即相同的问题得到的不同答案的可能性越高。取值 [0,1]
+  temperature: 0.5
+  # 模型回答的tokens的最大长度
+  maxTokens: 2048
+  # 大模型回复问题的最大响应时长，单位 s
+  maxResponseTime: 60
+  # 允许同时连接大模型的 websocket 数，如果是普通（免费）用户为 2，超过这个数连接响应会报错，具体参考官网。
+  QPS: 2
+  # 用于权限验证
+  appId: 5a462c52
+  # 用于权限验证
+  apiKey:
+  # 用于权限验证，
+  apiSecret:
+
+

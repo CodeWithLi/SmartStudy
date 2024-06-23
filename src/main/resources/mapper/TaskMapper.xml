@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.smartstudy.mapper.TaskMapper">
+
+    <sql id="TaskColumns">
+        task_id,content,name,create_time,end_time,status
+    </sql>
+
+    <!--    //根据姓名查询所有任务-->
+    <select id="allTask" resultType="com.example.smartstudy.model.po.TaskPo">
+        select <include refid="TaskColumns"></include> from task where name=#{name}
+    </select>
+
+<!--    //添加任务-->
+    <insert id="insertTask">
+        insert into task(<include refid="TaskColumns"></include>) values
+        (#{taskId},#{content},#{name},#{createTime},#{endTime},#{status})
+    </insert>
+
+<!--    //修改任务-->
+    <update id="updateTask">
+        update task
+        <set>
+            <if test="content !=null and content!='' ">content=#{content},</if>
+            <if test="name !=null and name!='' ">name=#{name},</if>
+           end_time=#{endTime}
+            <if test="status !=null and status!='' ">status=#{status},</if>
+        </set>
+        where task_id=#{taskId}
+    </update>
+
+<!--    //删除任务-->
+    <delete id="deleteTask">
+        delete from task where task_id=#{taskId}
+    </delete>
+
+
+<!--    //修改任务状态-->
+    <update id="updateTaskStatus">
+        update task set status=#{status} where task_id=#{taskId}
+    </update>
+
+<!--    //查询单条内容-->
+    <select id="selectOneTask">
+        select <include refid="TaskColumns"></include> from task
+        where content=#{content} and name=#{name}
+    </select>
+
+</mapper>

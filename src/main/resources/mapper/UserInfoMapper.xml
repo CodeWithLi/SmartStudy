@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.smartstudy.mapper.UserInfoMapper">
+
+    <sql id="InfoColumns">
+        user_id,name,sex,username,phone,birthday,image_name
+    </sql>
+
+    <!--    //根据手机号查询个人信息-->
+    <select id="selectInfoByPhone" resultType="com.example.smartstudy.model.po.UserInfoPo">
+        select <include refid="InfoColumns"></include> from user where phone=#{account}
+    </select>
+
+<!--    //根据身份证查询个人信息-->
+    <select id="selectInfoByIdNumber" resultType="com.example.smartstudy.model.po.UserInfoPo">
+        select <include refid="InfoColumns"></include> from user where id_number=#{account}
+    </select>
+
+<!--    //查询个人信息-->
+    <select id="selectInfoByUserId" resultType="com.example.smartstudy.model.po.UserInfoPo">
+        select <include refid="InfoColumns"></include> from user where user_id=#{userId}
+    </select>
+
+    <!--    //存储用户身份证信息-->
+    <update id="updateUserInfo">
+        update user
+        <set>
+            <if test="name !=null and name!='' ">name=#{name},</if>
+            <if test="sex !=null and sex!='' ">sex=#{sex},</if>
+            <if test="idNumber !=null and idNumber!='' ">id_number=#{idNumber},</if>
+            <if test="address !=null and address!='' ">address=#{address},</if>
+            birthday=#{birthday},
+            <if test="headImage !=null and headImage!='' ">head_image=#{headImage},</if>
+        </set>
+        where phone=#{account}
+    </update>
+
+
+<!--    //上传头像-->
+    <update id="uploadImage">
+        update user set image_name=#{imageName} where user_id=#{userId}
+    </update>
+
+<!--    //根据手机号更改密码-->
+    <update id="editPassByPhone">
+        update user set password=#{encodedPass} where phone=#{phone}
+    </update>
+
+<!--    //根据身份证更改密码-->
+    <update id="updatePassByIdNumber">
+        update user set password=#{encodedPass} where id_number=#{idNumber}
+    </update>
+
+<!--    //获取权限-->
+    <select id="getAuthorities" resultType="string">
+        select
+            distinct m.perm_key
+        from
+            user_role ur
+                left join role r on ur.role_id = r.role_id
+                left join role_menu rm on ur.role_id = rm.role_id
+                left join menu m on m.menu_id = rm.menu_id
+        where user_id = #{userId}
+    </select>
+</mapper>

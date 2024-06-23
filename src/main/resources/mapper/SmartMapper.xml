@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.smartstudy.mapper.SmartMapper">
+
+
+<!--    //查询用户有几条对话数据-->
+    <select id="queryCount" resultType="int">
+        select count(*) from dialogue where user_id=#{userId}
+    </select>
+
+
+<!--    //存储对话名称-->
+    <insert id="insertDialogueName">
+        insert into dialogue(dialogue_id,user_id,uid,dialogue_name,dialogue_place)
+        values (#{dialogueId},#{userId},#{uid},#{historyNameAnswer},#{place})
+    </insert>
+
+<!--    //获取对话名称-->
+    <select id="getDialoguesName" resultType="com.example.smartstudy.model.vo.XfDialogueName">
+        select user_id,uid,dialogue_name,dialogue_place from dialogue
+        where user_id=#{userId}
+    </select>
+
+<!--    //插入身份证信息-->
+    <update id="updateUserInfo">
+        update user
+        <set>
+            <if test="name !=null and name!='' ">name=#{name},</if>
+            <if test="sex !=null and sex!='' ">sex=#{sex},</if>
+            <if test="idNumber !=null and idNumber!='' ">id_number=#{idNumber},</if>
+            <if test="address !=null and address!='' ">address=#{address},</if>
+            <if test="headImage !=null and headImage!='' ">head_image=#{headImage},</if>
+            <if test="belongStatus !=null and belongStatus!='' ">belong_status=#{belongStatus},</if>
+            birthday=#{birthday}
+        </set>
+        where user_id=#{userId}
+    </update>
+
+<!--    //修改用户role角色-->
+    <update id="updateRoleInfo">
+        update user_role set role_id=#{roleId}
+        where user_id=#{userId}
+    </update>
+
+
+</mapper>

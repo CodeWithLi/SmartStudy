@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.smartstudy.mapper.UserMapper">
+
+    <sql id="UserColumns">
+        user_id
+        ,name,sex,username,phone,id_number,password,address,birthday,head_image
+           ,is_delete,image_name
+    </sql>
+
+    <!--    //判断用户是否存在-->
+    <select id="selectUserById" resultType="com.example.smartstudy.model.po.UserPo">
+        select <include refid="UserColumns"></include> from user
+        where phone=#{phone}
+    </select>
+
+    <!--    //添加用户-->
+    <insert id="addUser">
+        insert into user(user_id, username, phone, password)
+        values (#{userId}, #{username}, #{phone}, #{password})
+    </insert>
+
+    <!--    //根据用户手机号查询密码-->
+    <select id="selectUserByPhone" resultType="com.example.smartstudy.model.po.UserPo">
+        select <include refid="UserColumns"></include> from user where phone=#{phone}
+    </select>
+
+    <!--    //根据用户身份证查询密码-->
+    <select id="selectUserByIdNumber" resultType="com.example.smartstudy.model.po.UserPo">
+        select <include refid="UserColumns"></include> from user where id_number=#{idNumber}
+    </select>
+
+    <!--    //修改密码-->
+    <update id="editPass">
+        update user
+        set password=#{password}
+        where phone = #{phone}
+    </update>
+
+    <!--    //存入个人信息-->
+    <!--    //存储用户身份证信息-->
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="name !=null and name!='' ">name=#{name},</if>
+            <if test="sex !=null and sex!='' ">sex=#{sex},</if>
+            <if test="id_number !=null and id_number!='' ">id_number=#{idNumber},</if>
+            <if test="address !=null and address!='' ">address=#{address},</if>
+            <if test="birthday !=null and birthday!='' ">birthday=#{birthday},</if>
+            <if test="head_image !=null and head_image!='' ">head_image=#{headImage},</if>
+        </set>
+        where phone=#{account}
+    </update>
+
+    <!--    //security根据手机号查询个人信息-->
+    <select id="findUserByPhone" resultType="com.example.smartstudy.model.dto.Security.User">
+        select user_id
+             , name
+             , sex
+             , username
+             , phone
+             , id_number
+             , password
+             , address
+             , birthday
+             , is_delete
+             , image_name
+             , belong_status
+        from user
+        where phone = #{phone}
+    </select>
+
+    <!--    //security根据手机号查询个人信息-->
+    <!--    //security根据身份证号查询个人信息-->
+    <select id="findUserByIdNumber" resultType="com.example.smartstudy.model.dto.Security.User">
+        select user_id
+             , name
+             , sex
+             , username
+             , phone
+             , id_number
+             , password
+             , address
+             , birthday
+             , is_delete
+             , image_name
+             , belong_status
+        from user
+        where id_number = #{idNumber}
+    </select>
+
+<!--    //管理员登录-->
+    <select id="findUserByUsername" resultType="com.example.smartstudy.model.dto.Security.User">
+        select user_id
+             , name
+             , sex
+             , username
+             , phone
+             , id_number
+             , password
+             , address
+             , birthday
+             , is_delete
+             , image_name
+             , belong_status
+        from user
+        where username = #{username}
+    </select>
+
+<!--    //添加用户-->
+    <insert id="insertUser">
+        insert into user(user_id, username, phone, password,belong_status)
+        values (#{userId}, #{username}, #{phone}, #{password},#{role})
+    </insert>
+
+
+<!--    //插入role未认证用户-->
+    <insert id="insertNormorlRole">
+        insert into user_role(role_id,user_id) values (#{roleId},#{userId})
+    </insert>
+
+    <!--    //修改密码-->
+    <update id="editUser">
+        update user
+        set password=#{password}
+        where phone = #{phone}
+    </update>
+
+<!--    //向role表插入权限对应的用户-->
+    <insert id="insertRole">
+        insert into role(name,role_key)
+        values (#{name},#{role_key})
+    </insert>
+
+<!--    //向menu表插入对应权限-->
+    <insert id="insertmenu">
+        insert into menu(menu_name,perm_key)
+        values (#{name},#{prem_key})
+    </insert>
+
+<!--    //查询用户对应权限-->
+    <select id="selectUserPermission" resultType="string">
+        select
+            distinct m.perm_key
+        from
+            user_role ur
+                left join role r on ur.role_id = r.role_id
+                left join role_menu rm on ur.role_id = rm.role_id
+                left join menu m on m.menu_id = rm.menu_id
+        where user_id = #{userId}
+    </select>
+
+
+</mapper>

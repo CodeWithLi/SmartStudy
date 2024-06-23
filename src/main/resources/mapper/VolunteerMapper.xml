@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.smartstudy.mapper.VolunteerMapper">
+
+    <sql id="ActivityBaseColumns">
+        volunteer_activity_id,activity_time,activity_place,activity_title,
+        activity_summary,activity_image_name,activity_number,activity_demand
+    </sql>
+
+    <sql id="ActivityDetailsColumns">
+        volunteer_activity_id,activity_time,activity_place,activity_title,
+        activity_summary,activity_content,activity_image_name,activity_number,activity_demand
+        ,activity_method,activity_admin_connection
+    </sql>
+
+    <resultMap id="VolunteerActivityDetailsResultMap" type="com.example.smartstudy.model.dto.Volunteer.VolunteerActivityDetails">
+        <!-- 映射 VolunteerActivityDetails 的字段 -->
+        <result property="activityContent" column="activity_content"/>
+        <result property="activityMethod" column="activity_method"/>
+        <result property="activityAdminConnection" column="activity_admin_connection"/>
+        <!-- 映射 VolunteerActivityBaseInfo 的字段 -->
+        <association property="activityBaseInfo" javaType="com.example.smartstudy.model.dto.Volunteer.VolunteerActivityBaseInfo">
+            <result property="volunteerActivityId" column="volunteer_activity_id"/>
+            <result property="activityTime" column="activity_time"/>
+            <result property="activityPlace" column="activity_place"/>
+            <result property="activityTitle" column="activity_title"/>
+            <result property="activitySummary" column="activity_summary"/>
+            <result property="activityImageName" column="activity_image_name"/>
+            <result property="activityNumber" column="activity_number"/>
+            <result property="activityDemand" column="activity_demand"/>
+        </association>
+    </resultMap>
+
+
+    <sql id="insertActivityColumns">
+        volunteer_activity_id,activity_time,activity_place,activity_title,
+        activity_summary,activity_demand,activity_content,activity_method,activity_admin_connection
+    </sql>
+
+    <!--    //查询活动基本信息-->
+    <select id="allActivityBaseInfo" resultType="com.example.smartstudy.model.dto.Volunteer.VolunteerActivityBaseInfo">
+--         select va.volunteer_id, count(vs.activity_id) as signup_count
+--         from volunteer_activity va left join volunteer_signup vs on va.volunteer_id = vs.volunteer_id
+--         group by va.volunteer_id;
+        select <include refid="ActivityBaseColumns"></include>
+        from volunteer_activity
+    </select>
+
+<!--    //查询某活动的具体信息-->
+    <select id="getActivity" resultMap="VolunteerActivityDetailsResultMap">
+        select <include refid="ActivityDetailsColumns"></include>
+        from volunteer_activity where  volunteer_activity_id=#{activityId}
+    </select>
+
+<!--    //管理员添加活动-->
+    <insert id="insertActivity">
+        insert into volunteer_activity(<include refid="insertActivityColumns"></include>)
+        values (#{activityBaseInfo.volunteerActivityId},#{activityBaseInfo.activityTime},
+                #{activityBaseInfo.activityPlace},#{activityBaseInfo.activityTitle},
+                #{activityBaseInfo.activitySummary},#{activityBaseInfo.activityDemand},
+                #{activityContent},#{activityMethod},#{activityAdminConnection})
+    </insert>
+
+
+<!--    //存储图片-->
+    <update id="uploadImage">
+        update volunteer_activity set activity_image_name =#{upload}
+        where volunteer_activity_id=#{activityId}
+    </update>
+
+<!--    //修改活动信息-->
+    <update id="updateActivity">
+        update volunteer_activity
+        <set>
+            <if test="activityPlace !=null and activityPlace!='' ">activity_place=#{activityPlace},</if>
+            <if test="activityTitle !=null and activityTitle!='' ">activity_title=#{activityTitle},</if>
+            <if test="activitySummary !=null and activitySummary!='' ">activity_summary=#{activitySummary},</if>
+            <if test="activityDemand !=null and activityDemand!='' ">activity_demand=#{activityDemand},</if>
+            <if test="activityContent !=null and activityContent!='' ">activity_content=#{activityContent},</if>
+            <if test="activityMethod !=null and activityMethod!='' ">activity_method=#{activityMethod},</if>
+            activity_time=#{activityTime}
+        </set>
+        where volunteer_activity_id=#{volunteerActivityId}
+    </update>
+
+<!--    //删除活动-->
+    <delete id="deleteActivity">
+        delete from volunteer_activity where volunteer_activity_id=#{activityId}
+    </delete>
+
+<!--    //判断用户是否存在志愿报名表中-->
+    <select id="hasApplicationActivity" resultType="int">
+        select count(*) from volunteer_review where volunteer_activity_id=#{volunteerActivityId} and user_id=#{userId}
+    </select>
+
+<!--    //将报名数据存储进数据库-->
+    <insert id="insertApplicationActivity">
+        insert into volunteer_review(review_id,volunteer_activity_id,user_id,user_name,user_phone,user_id_number,review_status)
+        values (#{reviewId},#{volunteerActivityId},#{userId},#{userName},#{userPhone},#{userIdNumber},#{reviewStatus})
+    </insert>
+
+<!--    //查询所有待审核活动-->
+    <select id="allReview" resultType="com.example.smartstudy.model.dto.Volunteer.VolunteerReview.ReviewInfo">
+        select
+            vr.*,
+            va.activity_title as activity_title,
+            va.activity_image_name as activity_image_name
+        from
+            volunteer_review vr left join volunteer_activity va
+            on vr.volunteer_activity_id = va.volunteer_activity_id;
+    </select>
+
+<!--    //resultReview-->
+    <update id="resultReview">
+        update volunteer_review set review_status=#{code} where
+        volunteer_activity_id=#{volunteerActivityId} and user_id=#{userId}
+    </update>
+
+<!--    //审核失败-->
+<!--    <update id="failReview">-->
+<!--        update volunteer_review set review_status=-1 where-->
+<!--            volunteer_activity_id=#{volunteerActivityId} and user_id=#{userId}-->
+<!--    </update>-->
+
+<!--    //审核成功后，报名人数+1-->
+    <update id="addActivityNumber">
+        update volunteer_activity set activity_number = activity_number +1
+        where volunteer_activity_id=#{activityId}
+    </update>
+
+<!--    //审核通过后，注册到数据库表中-->
+    <insert id="successSignup">
+        insert into volunteer_signup(volunteer_signup_id,volunteer_user_id,volunteer_activity_id,volunteer_signup_time)
+        values (#{volunteerSignupId},#{userId},#{volunteerActivityId},#{volunteerSignupTime})
+    </insert>
+
+
+<!--    //获取用户已报名的全部活动-->
+    <resultMap id="UserJoinActivityResultMap" type="com.example.smartstudy.model.dto.Volunteer.UserJoinActivity">
+        <!-- 映射 VolunteerActivityDetails 的字段 -->
+        <result property="userId" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="phone" column="user_phone"/>
+        <result property="idNumber" column="user_id_number"/>
+        <!-- 映射 VolunteerActivityBaseInfo 的字段 -->
+        <association property="baseInfo" javaType="com.example.smartstudy.model.dto.Volunteer.VolunteerActivityBaseInfo">
+            <result property="volunteerActivityId" column="volunteer_activity_id"/>
+            <result property="activityTime" column="activity_time"/>
+            <result property="activityPlace" column="activity_place"/>
+            <result property="activityTitle" column="activity_title"/>
+            <result property="activitySummary" column="activity_summary"/>
+            <result property="activityImageName" column="activity_image_name"/>
+            <result property="activityNumber" column="activity_number"/>
+            <result property="activityDemand" column="activity_demand"/>
+        </association>
+    </resultMap>
+    <select id="joinedActivity" resultMap="UserJoinActivityResultMap">
+        select va.<include refid="ActivityBaseColumns"></include>,vr.user_id,vr.user_name,vr.user_phone,vr.user_id_number
+        from volunteer_activity va
+                 join volunteer_review vr on vr.volunteer_activity_id = vr.volunteer_activity_id
+        where vr.user_id=#{userId}
+--         vr.review_status=1 and
+    </select>
+</mapper>
