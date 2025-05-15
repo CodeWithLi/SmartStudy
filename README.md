@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e5619cb0-1d85-4453-af8f-471c68564705)![image](https://github.com/user-attachments/assets/e1845fdf-e327-4a3d-a3e8-3b621e50e578)# 智学通
+# 智学通
 
 ## 简述
 随着人工智能技术的发展及其在教育领域的深入应用，教育现代化迎来了新的机遇。我们设计并开发了一个集成GPT功能、待办管理与志愿服务模块的Web网站，旨在为学生提供智能、便捷、安全的服务体验。借助如科大讯飞提供的语音识别、自然语言处理等AI能力，平台不仅助力学生高效管理学习与生活事务，也为其参与社会公益活动提供便捷通道，推动教育信息化与智能化发展。
@@ -24,7 +24,14 @@
 
 ## 设计
 ### 应用框架
+![image](https://github.com/user-attachments/assets/e5619cb0-1d85-4453-af8f-471c68564705)![image](https://github.com/user-attachments/assets/e1845fdf-e327-4a3d-a3e8-3b621e50e578)
+技术和开发工具的选型考虑以下方面:良好的生态，性能，流行性与易用性。
+基于Java后端技术栈的应用，采用了Spring security、spring Boot、Spring MVc以及MyBatis-Plus等框架和工具。这些技术的结合提供了高效的开发环境和可靠的业务逻辑实现，同时使用MSQL和Redis等教据库技术，保障了数据的存
+储和快速访问。
+开发过程中，使用了IDEA和Navicat作为主要的开发工具，确保了开发过程的高效性和可视化管理数据库的便捷性。另外，通过使用Another Redis Desktop Manager管理Redis数据库，进一步提升了开发效率和数据管理的可靠性。
+在应用中整合了MinIO相关API和SDK，为图片存储提供了可靠的解决方案。
 
+总的来说，该应用采用了一系列专业的技术和工具，从后端到前端，从数据库到服务器，为用户提供了高质量、稳定性和安全性的应用体验。
 
 ### 主流框架 & 特性
 
