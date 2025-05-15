@@ -60,8 +60,10 @@
 ## Getting Started
 确保本机已经安装了JDK17,MySQL 8以上版本, Redis 7.0.8,Minio 8.4.0
   1. 初始化数据库: 进入根据sql脚本文件导入数据库
+  
   2. 配置application.yml文件
-    1）修改 `application.yml` 的数据库配置为你自己的：
+   
+  1）修改 `application.yml` 的数据库配置为你自己的：
     ```yml
     spring:
       datasource:
@@ -70,7 +72,8 @@
         username: 
         password: 
     ```
-     2）修改 `application.yml` 的 Redis 配置为你自己的：
+    
+   2）修改 `application.yml` 的 Redis 配置为你自己的：
     ```yml
       spring:
         redis:
@@ -78,7 +81,8 @@
         port: 6379
         password: 
     ```
-     3）修改 `application.yml` 的 minion 配置为你自己的：
+    
+   3）修改 `application.yml` 的 minion 配置为你自己的：
     ```yml
       endpoint: http://localhost:9000
       bucketName: 
