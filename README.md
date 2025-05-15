@@ -24,125 +24,86 @@
 
 ## 设计
 ### 应用框架
-![image](https://github.com/user-attachments/assets/e5619cb0-1d85-4453-af8f-471c68564705)![image](https://github.com/user-attachments/assets/e1845fdf-e327-4a3d-a3e8-3b621e50e578)
+![image](https://github.com/user-attachments/assets/e5619cb0-1d85-4453-af8f-471c68564705)
 技术和开发工具的选型考虑以下方面:良好的生态，性能，流行性与易用性。
-基于Java后端技术栈的应用，采用了Spring security、spring Boot、Spring MVc以及MyBatis-Plus等框架和工具。这些技术的结合提供了高效的开发环境和可靠的业务逻辑实现，同时使用MSQL和Redis等教据库技术，保障了数据的存
-储和快速访问。
+
+基于Java后端技术栈的应用，采用了Spring security、spring Boot、Spring MVc以及MyBatis-Plus等框架和工具。这些技术的结合提供了高效的开发环境和可靠的业务逻辑实现，同时使用MSQL和Redis等教据库技术，保障了数据的存储和快速访问。
+
 开发过程中，使用了IDEA和Navicat作为主要的开发工具，确保了开发过程的高效性和可视化管理数据库的便捷性。另外，通过使用Another Redis Desktop Manager管理Redis数据库，进一步提升了开发效率和数据管理的可靠性。
+
 在应用中整合了MinIO相关API和SDK，为图片存储提供了可靠的解决方案。
+在应用中也整合了科大讯飞相关API和SDK，包括星火大模型、文本合规、图片合规、身份证识别等功能，为应用的GPT功能和内容审核提供了可靠的解决方案。
 
 总的来说，该应用采用了一系列专业的技术和工具，从后端到前端，从数据库到服务器，为用户提供了高质量、稳定性和安全性的应用体验。
 
-### 主流框架 & 特性
+### 业务设计
+![image](https://github.com/user-attachments/assets/47fbeaa9-cc2c-40dd-b66e-10276bd06c72)
+上述为本程序的用例图,根据上述用例图,可以看出该应用具有以下功能:
+1. 用户注册
+   - 未注册用户可通过输入身份证、用户名和密码完成账户注册。
+2. 用户登录
+   - 注册后用户可使用身份证和密码进行登录，以便使用全部功能。
+3. 添加代办
+   - 用户可以添加需要待完成的任务，以便于提醒自己。
+4. 志愿活动
+   - 用户可以根据自己的需求来判断是否参加某个志愿活动。
+5. GPT
+   - 用户打开网页即可使用GPT，并进行对话。
 
-- Spring Boot
-- Spring Security
-- Spring MVC
-- MyBatis
-- Spring Scheduler 定时任务
+### sql设计
+![image](https://github.com/user-attachments/assets/1a305f08-c6c4-4d94-b4c2-4caa958c0898)
+这是本程序的sql设计图，描述了系统中的主要实体及其之间的关系。
 
-### 数据存储
+### API设计
+在线API文档：https://apifox.com/apidoc/shared-25a0116c-28cc-4210-867a-420ad2d8e1ff
 
-- MySQL 数据库
-- Redis 内存数据库
-- Cache Spring 缓存
-- Minio 对象存储
+## Getting Started
+确保本机已经安装了JDK17,MySQL 8以上版本, Redis 7.0.8,Minio 8.4.0
+  1. 初始化数据库: 进入根据sql脚本文件导入数据库
+  2. 配置application.yml文件
+    1）修改 `application.yml` 的数据库配置为你自己的：
+    ```yml
+    spring:
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/DB
+        username: 
+        password: 
+    ```
+     2）修改 `application.yml` 的 Redis 配置为你自己的：
+    ```yml
+      spring:
+        redis:
+        host: localhost
+        port: 6379
+        password: 
+    ```
+     3）修改 `application.yml` 的 minion 配置为你自己的：
+    ```yml
+      endpoint: http://localhost:9000
+      bucketName: 
+      accessKey: 
+      secretKey: 
+    ```
 
-### 工具类
+  ### 科大讯飞密钥
+      ```yml
+        # id
+        secret-id: 
+        # 密钥
+        secret-key:
+      ```
 
-- Hutool 工具库
-- Apache Commons Lang3 工具类
-- Lombok 注解
-- Validation 验证
-- 科大讯飞 等等。。
+  ###  uni短信服务
+    ```yml
+      #短信公钥
+      access-key-id: 
+      #短信模板 ID
+      template_id:
+      #短信签名
+      signature: 
+      #有效时间 1000*60*3
+      ttl: 
+    ```
+  3. 启动程序：启动程序,在项目根目录下执行 mvn spring-boot:run 命令,程序会自动启动
 
-### 业务特性
-
-- JWT身份验证和授权
-- 全局请求响应拦截器
-- 全局异常处理器
-- 自定义错误码
-- 封装通用响应类
-- 全局跨域处理
-- 多环境配置
-
-
-## 业务功能
-
-- 管理员志愿管理
-- 添加待办
-- 参加志愿
-- 个人中心
-- 讯飞星火
-- 图片理解，文本合规，图片合规等等
-
-### 单元测试
-
-- 基于apifox进行接口测试
-- apifox地址：https://apifox.com/apidoc/shared-25a0116c-28cc-4210-867a-420ad2d8e1ff
-
-### 架构设计
-
-- 合理分层
-
-
-### MySQL 数据库
-
-1）修改 `application.yml` 的数据库配置为你自己的：
-
-```yml
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db
-    username: root
-    password: 123456
-```
-
-2）执行 `sql/orientation.sql` 中的数据库语句，自动创建库表
-
-
-### Redis 缓存
-
-1）修改 `application.yml` 的 Redis 配置为你自己的：
-
-```yml
-spring:
-  redis:
-    host: localhost
-    port: 6379
-    password: 123456
-```
-
-### minio 对象存储
-
-1）修改 `application.yml` 的 minion 配置为你自己的：
-```yml
-endpoint: http://localhost:9000
-bucketName: orientation
-accessKey: 
-secretKey: 
-```
-
-### 科大讯飞密钥
-```yml
-    # id
-    secret-id: 
-    # 密钥
-    secret-key:
-```
-
-###  uni短信服务
-```yml
-    #短信公钥
-    access-key-id: 
-    #短信模板 ID
-    template_id:
-    #短信签名
-    signature: 
-    #有效时间 1000*60*3
-    ttl: 
-```
-
-运行SmartStudyApplication即可访问，端口为3078
-服务器地址: 114.132.67.226:3078
